@@ -1,0 +1,24 @@
+isProduction: false
+database:
+  deploy: true
+  image:
+    repository: postgres
+    tag: latest
+  name: database-deployment
+  namespace: database-tech-challenge
+  port: 5432
+  envSecretName: database-secret
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 3
+  volumeMount:
+    mountPath: /var/lib/postgresql/data
+    name: database-pvc
+  podName: database-pod
+  serviceName: database-service
+  

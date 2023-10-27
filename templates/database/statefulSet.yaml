@@ -1,0 +1,46 @@
+{{- if .Values.database.deploy }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.database.name }}
+  namespace: {{ .Values.database.namespace }}
+spec:
+  template:
+    metadata:
+      name: "database"
+      labels:
+        app: {{ .Values.database.podName }}
+    spec:
+      containers:
+        - name: database-container
+          image: "{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
+          ports:
+            - name: database-port
+              containerPort: {{ .Values.database.port }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.database.envSecretName }}
+          volumeMounts:
+            - mountPath: {{ .Values.database.volumeMount.mountPath }}
+              name: {{ .Values.database.volumeMount.name }}
+          livenessProbe:
+            tcpSocket:
+              port: database-port
+            initialDelaySeconds: {{ .Values.database.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.database.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.database.livenessProbe.failureThreshold }}
+          readinessProbe:
+            tcpSocket:
+              port: database-port
+            initialDelaySeconds: {{ .Values.database.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.database.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.database.readinessProbe.failureThreshold }}
+      volumes:
+        - name: {{ .Values.database.volumeMount.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.database.volumeMount.name }}
+  selector:
+    matchLabels:
+      app: {{ .Values.database.podName }}
+  serviceName: {{ .Values.database.serviceName }}
+{{- end }}
