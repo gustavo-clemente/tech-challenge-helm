@@ -1,3 +1,4 @@
+{{- if .Values.monitoring.grafana.deploy | default false }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,3 +27,4 @@ spec:
     matchLabels:
       app: {{ .Values.monitoring.grafana.deployment.spec.podName }}
   replicas: {{ .Values.monitoring.grafana.replicas }}
+{{- end }}
