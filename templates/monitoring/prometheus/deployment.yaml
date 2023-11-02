@@ -1,0 +1,31 @@
+{{- if .Values.monitoring.prometheus.deploy | default false }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.monitoring.prometheus.deployment.name }}
+  namespace: {{ .Values.monitoring.namespace }}
+spec:
+  template:
+    metadata:
+      name: prometheus
+      labels:
+        app: {{ .Values.monitoring.prometheus.deployment.spec.podName }}
+    spec:
+      containers:
+        - name: prometheus-container
+          image: "{{ .Values.monitoring.prometheus.image.repository }}:{{ .Values.monitoring.prometheus.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.monitoring.prometheus.deployment.spec.port }}
+          volumeMounts:
+            - name: {{ .Values.monitoring.prometheus.deployment.spec.volumeMount.name }}
+              mountPath: {{ .Values.monitoring.prometheus.deployment.spec.volumeMount.mountPath }}
+      volumes:
+        - name: {{ .Values.monitoring.prometheus.deployment.spec.volumeMount.name }}
+          configMap:
+            name: {{ .Values.monitoring.prometheus.configMpName }}
+  selector:
+    matchLabels:
+      app: {{ .Values.monitoring.prometheus.deployment.spec.podName }}
+  replicas: {{ .Values.monitoring.prometheus.replicas }}
+{{- end }}
+        

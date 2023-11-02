@@ -22,4 +22,24 @@ database:
   podName: database-pod
   serviceName: database-service
   nodePort: 31000 
-  
+monitoring:
+  namespace: monitoring-tech-challenge
+  prometheus:
+    deploy: true
+    replicas: 1
+    configMpName: prometheus-configmap
+    image:
+      repository: prom/prometheus
+      tag: latest
+    deployment:
+      name: prometheus-deployment
+      spec:
+        podName: prometheus-pod
+        port: 9090
+        volumeMount:
+          mountPath: /etc/prometheus
+          name: prometheus-volume
+    service:
+      name: prometheus-service
+      type: NodePort
+      nodePort: 31003

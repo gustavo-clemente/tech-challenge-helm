@@ -1,0 +1,19 @@
+{{- if .Values.monitoring.prometheus.deploy | default false }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.monitoring.prometheus.service.name }}
+  namespace: {{ .Values.monitoring.namespace }}
+  labels:
+    app: {{ .Values.monitoring.prometheus.service.name }}
+spec:
+  type: {{ .Values.monitoring.prometheus.service.type }}
+  selector:
+    app: {{ .Values.monitoring.prometheus.deployment.spec.podName }}
+  ports:
+      - port: {{ .Values.monitoring.prometheus.deployment.spec.port }}
+        targetPort: {{ .Values.monitoring.prometheus.deployment.spec.port }}
+        {{- if eq .Values.monitoring.prometheus.service.type "NodePort" }}
+        nodePort: {{ .Values.monitoring.prometheus.service.nodePort }}
+        {{- end }}
+{{- end }}
