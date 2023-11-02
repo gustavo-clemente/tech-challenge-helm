@@ -21,4 +21,5 @@ database:
     name: database-pvc
   podName: database-pod
   serviceName: database-service
+  nodePort: 31000 
   
