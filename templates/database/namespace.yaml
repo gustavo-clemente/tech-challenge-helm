@@ -1,4 +1,6 @@
+{{- if .Values.database.deploy | default false }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: {{ .Values.database.namespace }}
+{{- end }}
