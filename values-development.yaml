@@ -43,3 +43,22 @@ monitoring:
       name: prometheus-service
       type: NodePort
       nodePort: 31003
+  grafana:
+    deploy: true
+    replicas: 1
+    pvcName: grafana-pvc
+    image:
+      repository: grafana/grafana
+      tag: 8.1.5
+    deployment:
+      name: grafana-deployment
+      spec:
+        podName: grafana-pod
+        port: 3000
+        volumeMount:
+          mountPath: /var/lib/grafana
+          name: grafana-volume
+    service:
+      name: grafana-service
+      type: NodePort
+      nodePort: 31002
