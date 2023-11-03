@@ -1,0 +1,96 @@
+isProduction: false
+database:
+  deploy: true
+  image:
+    repository: postgres
+    tag: latest
+  name: database-deployment
+  namespace: database-tech-challenge
+  port: 5432
+  envSecretName: database-secrets
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 3
+  volumeMount:
+    mountPath: /var/lib/postgresql/data
+    name: database-pvc
+  podName: database-pod
+  serviceName: database-service
+  nodePort: 31000 
+monitoring:
+  namespace: monitoring-tech-challenge
+  prometheus:
+    deploy: true
+    replicas: 1
+    configMpName: prometheus-configmap
+    image:
+      repository: prom/prometheus
+      tag: latest
+    deployment:
+      name: prometheus-deployment
+      spec:
+        podName: prometheus-pod
+        port: 9090
+        volumeMount:
+          mountPath: /etc/prometheus
+          name: prometheus-volume
+    service:
+      name: prometheus-service
+      type: NodePort
+      nodePort: 31003
+  grafana:
+    deploy: true
+    replicas: 1
+    pvcName: grafana-pvc
+    image:
+      repository: grafana/grafana
+      tag: 8.1.5
+    deployment:
+      name: grafana-deployment
+      spec:
+        podName: grafana-pod
+        port: 3000
+        volumeMount:
+          mountPath: /var/lib/grafana
+          name: grafana-volume
+    service:
+      name: grafana-service
+      type: NodePort
+      nodePort: 31002
+api:
+    namespace: api-tech-challenge
+    replicas: 2
+    envSecretName: api-secrets
+    image:
+      repository: gustavoclemente/api-tech-challenge-fiap
+      tag: 1.1.0
+    deployment:
+      name: api-fiap-deployment
+      spec:
+        podName: api-fiap-pod
+        port: 3000
+      livenessProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 10
+      resources:
+        limits:
+          cpu: 500m
+        requests:
+          cpu: 500m
+    service:
+      name: api-service
+      type: LoadBalancer
+      nodePort: 31001
+      protocolTCP: false
+    hpa:
+      spec:
+        scaleTargetRef:
+          minReplicas: 2
+          maxReplicas: 10
+        metrics:
+          averageUtilization: 20

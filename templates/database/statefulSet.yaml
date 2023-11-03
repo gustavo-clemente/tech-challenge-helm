@@ -1,4 +1,4 @@
-{{- if .Values.database.deploy }}
+{{- if .Values.database.deploy | default false }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

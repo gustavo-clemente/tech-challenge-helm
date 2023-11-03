@@ -1,0 +1,28 @@
+{{- if .Values.monitoring.prometheus.deploy | default false }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.monitoring.prometheus.service.name }}
+  namespace: {{ .Values.monitoring.namespace }}
+  labels:
+    app: {{ .Values.monitoring.prometheus.service.name }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+spec:
+  type: {{ .Values.monitoring.prometheus.service.type }}
+  selector:
+    app: {{ .Values.monitoring.prometheus.deployment.spec.podName }}
+  ports:
+      - port: {{ .Values.monitoring.prometheus.deployment.spec.port }}
+        targetPort: {{ .Values.monitoring.prometheus.deployment.spec.port }}
+        
+        {{- if eq .Values.api.service.type "NodePort" }}
+        nodePort: {{ .Values.monitoring.grafana.service.nodePort}}
+        {{- end }}
+
+        {{- if .Values.monitoring.grafana.service.protocolTCP }} 
+        protocol: TCP
+        {{- end }}
+{{- end }}

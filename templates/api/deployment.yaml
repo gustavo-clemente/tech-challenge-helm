@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.api.deployment.name}}
+  namespace: {{ .Values.api.namespace }}
+  labels:
+    app: {{ .Values.api.deployment.name}}
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.api.deployment.spec.podName }}
+  template:
+    metadata:
+      name: {{ .Values.api.deployment.spec.podName }}
+      labels:
+        app: {{ .Values.api.deployment.spec.podName }}
+    spec:
+      containers:
+        - name: api-fiap-challenge-container
+          image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
+          ports:
+            - name: api-port
+              containerPort: {{ .Values.api.deployment.spec.port }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.api.envSecretName }}
+          resources:
+            limits:
+              cpu: {{ .Values.api.deployment.resources.limits.cpu }}
+            requests:
+              cpu: {{ .Values.api.deployment.resources.requests.cpu }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: api-port
+            initialDelaySeconds: {{ .Values.api.deployment.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.api.deployment.livenessProbe.periodSeconds }}

@@ -1,0 +1,17 @@
+{{- if .Values.monitoring.grafana.deploy | default false }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.monitoring.grafana.pvcName }}
+  namespace: {{ .Values.monitoring.namespace }}
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      app: local-pv
+{{- end }}

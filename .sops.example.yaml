@@ -1,0 +1,3 @@
+sops:
+    kms:
+        - arn: {{ARN da chave KMS utilizada}}

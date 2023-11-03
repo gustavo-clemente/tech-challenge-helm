@@ -1,0 +1,30 @@
+{{- if .Values.monitoring.grafana.deploy | default false }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.monitoring.grafana.deployment.name }}
+  namespace: {{ .Values.monitoring.namespace }}
+spec:
+  template:
+    metadata:
+      name: {{ .Values.monitoring.grafana.deployment.spec.podName }}
+      labels:
+        app: {{ .Values.monitoring.grafana.deployment.spec.podName }}
+    spec:
+      containers:
+        - name: grafana-container
+          image: {{ .Values.monitoring.grafana.image.repository }}:{{ .Values.monitoring.grafana.image.tag }}
+          ports:
+            - containerPort: {{ .Values.monitoring.grafana.deployment.spec.port }}
+          volumeMounts:
+            - name: {{ .Values.monitoring.grafana.deployment.spec.volumeMount.name }}
+              mountPath: {{ .Values.monitoring.grafana.deployment.spec.volumeMount.mountPath }}
+      volumes:
+        - name: {{ .Values.monitoring.grafana.deployment.spec.volumeMount.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.monitoring.grafana.pvcName }}
+  selector:
+    matchLabels:
+      app: {{ .Values.monitoring.grafana.deployment.spec.podName }}
+  replicas: {{ .Values.monitoring.grafana.replicas }}
+{{- end }}
