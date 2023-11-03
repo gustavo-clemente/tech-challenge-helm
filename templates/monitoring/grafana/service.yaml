@@ -6,6 +6,10 @@ metadata:
   namespace: {{ .Values.monitoring.namespace }}
   labels:
     app: {{ .Values.monitoring.grafana.service.name }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 spec:
   type: {{ .Values.monitoring.grafana.service.type }}
   selector:
@@ -13,7 +17,12 @@ spec:
   ports:
       - port: {{ .Values.monitoring.grafana.deployment.spec.port }}
         targetPort: {{ .Values.monitoring.grafana.deployment.spec.port }}
-        {{- if eq .Values.monitoring.grafana.service.type "NodePort" }}
-        nodePort: {{ .Values.monitoring.grafana.service.nodePort }}
+
+        {{- if eq .Values.api.service.type "NodePort" }}
+        nodePort: {{ .Values.monitoring.grafana.service.nodePort}}
+        {{- end }}
+
+        {{- if .Values.monitoring.grafana.service.protocolTCP }} 
+        protocol: TCP
         {{- end }}
 {{- end }}

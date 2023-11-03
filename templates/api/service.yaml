@@ -5,6 +5,10 @@ metadata:
   namespace: {{ .Values.api.namespace }}
   labels:
     app: {{ .Values.api.service.name }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 spec:
   type: {{ .Values.api.service.type }}
   selector:
