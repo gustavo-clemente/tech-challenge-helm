@@ -1,0 +1,57 @@
+name: Install Chart on AWS EKS
+
+on:
+    push:
+        branches:
+            - main
+jobs:
+    install:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+              with:
+                fetch-depth: 0
+
+            - name: Install AWS CLI
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y awscli
+              env:
+                AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+            - name: Configure AWS Credentials
+              run: |
+                aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws eks update-kubeconfig --name ${{ secrets.AWS_EKS_CLUSTER_NAME }}
+              env: 
+                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                AWS_EKS_CLUSTER_NAME: ${{ secrets.AWS_EKS_CLUSTER_NAME }}
+
+            - name: Install kubectl
+
+              run: |
+                curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                chmod +x kubectl
+                sudo mv kubectl /usr/local/bin/
+
+            - name: Install Helm
+              run: |
+                curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+                chmod 700 get_helm.sh
+                ./get_helm.sh
+              env:
+                PATH: ${{ github.workspace }}:$PATH
+
+            - name: Install Helm Secrets
+              run: |
+                helm plugin install https://github.com/zendesk/helm-secrets
+              env:
+                PATH: ${{ github.workspace }}:$PATH
+
+            - name: Install Helm Chart
+              run: |
+                helm secrets install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets.yaml
+            
