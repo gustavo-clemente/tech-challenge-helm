@@ -24,10 +24,12 @@ jobs:
               run: |
                 aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
                 aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws eks update-kubeconfig --name ${{ secrets.AWS_EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_DEFAULT_REGION }}
               env: 
                 AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                 AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 AWS_EKS_CLUSTER_NAME: ${{ secrets.AWS_EKS_CLUSTER_NAME }}
+                AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
             - name: Install kubectl
 
@@ -41,14 +43,10 @@ jobs:
                 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
                 chmod 700 get_helm.sh
                 ./get_helm.sh
-              env:
-                PATH: ${{ github.workspace }}:$PATH
 
             - name: Install Helm Secrets
               run: |
                 helm plugin install https://github.com/zendesk/helm-secrets
-              env:
-                PATH: ${{ github.workspace }}:$PATH
 
             - name: Install Helm Chart
               run: |
