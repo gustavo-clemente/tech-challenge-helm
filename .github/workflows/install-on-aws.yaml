@@ -60,5 +60,5 @@ jobs:
 
             - name: Test if decrypt works
               run: |
-                helm secrets decrypt .\secrets\production\database-secrets.yaml
+                helm secrets decrypt ./secrets/production/database-secrets.yaml
             
