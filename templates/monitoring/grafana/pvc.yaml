@@ -4,6 +4,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ .Values.monitoring.grafana.pvcName }}
   namespace: {{ .Values.monitoring.namespace }}
+annotations:
+    volume.beta.kubernetes.io/storage-class: {{ .Values.volume.storageClassname }}
 spec:
   accessModes:
     - "ReadWriteOnce"
