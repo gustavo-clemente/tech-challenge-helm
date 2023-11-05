@@ -54,6 +54,13 @@ jobs:
               run: |
                 helm plugin install https://github.com/jkroepke/helm-secrets --version v4.5.1
 
+            - name: Create .sops.yaml file
+              run: |
+                echo
+                creation_rules:
+                  - kms: ${{ secrets.AWS_KMS_ARN }} > .sops.yaml
+                  
+
             # - name: Install Helm Chart
             #   run: |
             #     helm secrets install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets.yaml
