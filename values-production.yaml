@@ -75,3 +75,6 @@ api:
           maxReplicas: 10
         metrics:
           averageUtilization: 20
+volume:
+  storageClassname: efs-sc
+  efsID: fs-0f7393ad48e2a4c83

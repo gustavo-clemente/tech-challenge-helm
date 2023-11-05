@@ -7,11 +7,15 @@ metadata:
 spec:
   accessModes:
     - "ReadWriteOnce"
-  volumeMode: Filesystem
   resources:
     requests:
       storage: 1Gi
+  {{- if .Values.isProduction }}
+  storageClassName: {{ .Values.volume.storageClassname }}
+  {{- else }}
+  volumeMode: Filesystem
   selector:
     matchLabels:
       app: local-pv
+  {{- end }}
 {{- end }}
