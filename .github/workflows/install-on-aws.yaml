@@ -63,7 +63,7 @@ jobs:
             
             - name: Decrypt secrets file
               run: |
-                helm secrets decrypt secrets/production/database-secrets.yaml
+                helm secrets decrypt secrets/production/database-secrets.yaml > secrets/production/database-secrets-dec.yaml
 
             - name: Install Helm Chart
               run: |
