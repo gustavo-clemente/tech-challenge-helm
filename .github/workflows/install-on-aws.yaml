@@ -56,10 +56,10 @@ jobs:
 
             - name: Create .sops.yaml file
               run: |
-                echo
-                creation_rules:
-                  - kms: ${{ secrets.AWS_KMS_ARN }} > .sops.yaml
-                  
+                echo "creation_rules:" > .sops.yaml
+                echo "  - kms: '${{ secrets.AWS_KMS_ARN }}'" >> .sops.yaml
+              env:
+                AWS_KMS_ARN: ${{ secrets.AWS_KMS_ARN }}
 
             # - name: Install Helm Chart
             #   run: |
