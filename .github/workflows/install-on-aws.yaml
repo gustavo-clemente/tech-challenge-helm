@@ -38,6 +38,12 @@ jobs:
                 chmod +x kubectl
                 sudo mv kubectl /usr/local/bin/
 
+            - name: Install SOPS
+              run: |
+                curl -LO https://github.com/getsops/sops/releases/download/v3.8.1/sops-v3.8.1.linux.amd64
+                mv sops-v3.8.1.linux.amd64 /usr/local/bin/sops
+                chmod +x /usr/local/bin/sops
+
             - name: Install Helm
               run: |
                 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -48,7 +54,11 @@ jobs:
               run: |
                 helm plugin install https://github.com/zendesk/helm-secrets
 
-            - name: Install Helm Chart
+            # - name: Install Helm Chart
+            #   run: |
+            #     helm secrets install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets.yaml
+
+            - name: Test if decrypt works
               run: |
-                helm secrets install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets.yaml
+                helm secrets decrypt .\secrets\production\database-secrets.yaml
             
