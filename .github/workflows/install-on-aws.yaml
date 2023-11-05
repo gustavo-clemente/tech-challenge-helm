@@ -52,7 +52,7 @@ jobs:
 
             - name: Install Helm Secrets
               run: |
-                helm plugin install https://github.com/zendesk/helm-secrets
+                helm plugin install https://github.com/jkroepke/helm-secrets --version v4.5.1
 
             # - name: Install Helm Chart
             #   run: |
