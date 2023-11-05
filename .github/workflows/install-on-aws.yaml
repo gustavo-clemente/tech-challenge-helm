@@ -60,8 +60,12 @@ jobs:
                 echo "  - kms: '${{ secrets.AWS_KMS_ARN }}'" >> .sops.yaml
               env:
                 AWS_KMS_ARN: ${{ secrets.AWS_KMS_ARN }}
+            
+            - name: Decrypt secrets file
+              run: |
+                helm secrets decrypt secrets/production/database-secrets.yaml > secrets/production/database-secrets-dec.yaml
 
             - name: Install Helm Chart
               run: |
-                helm secrets install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets.yaml
+                helm secrets install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets-dec.yaml
             
