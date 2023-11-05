@@ -63,9 +63,13 @@ jobs:
             
             - name: Decrypt secrets file
               run: |
-                helm secrets decrypt secrets/production/database-secrets.yaml > secrets/production/database-secrets-dec.yaml
+                helm secrets decrypt secrets/production/database-secrets.yaml
 
             - name: Install Helm Chart
               run: |
                 helm secrets install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets-dec.yaml
+
+            - name: Test decrypt
+              run: |
+                cat secrets/production/database-secrets-dec.yaml
             

@@ -56,8 +56,8 @@ api:
         podName: api-fiap-pod
         port: 3000
       livenessProbe:
-        initialDelaySeconds: 30
-        periodSeconds: 10
+        initialDelaySeconds: 120
+        periodSeconds: 30
       resources:
         limits:
           cpu: 500m
