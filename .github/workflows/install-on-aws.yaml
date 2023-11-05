@@ -67,7 +67,7 @@ jobs:
 
             - name: Install Helm Chart
               run: |
-                helm secrets install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets-dec.yaml
+                helm secrets upgrade --install api-tech-challenge . -f values-production.yaml -f secrets/production/database-secrets-dec.yaml
 
             - name: Test decrypt
               run: |
